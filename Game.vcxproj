@@ -113,6 +113,7 @@
     <ClCompile Include="src\glad\glad.c" />
     <ClCompile Include="src\IndexBuffer.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
@@ -407,6 +408,8 @@
     <ClInclude Include="include\KHR\khrplatform.h" />
     <ClInclude Include="src\Application.hpp" />
     <ClInclude Include="src\IndexBuffer.hpp" />
+    <ClInclude Include="src\Shader.hpp" />
+    <ClInclude Include="src\String.hpp" />
     <ClInclude Include="src\Typedefs.hpp" />
     <ClInclude Include="src\VertexBuffer.hpp" />
     <ClInclude Include="src\Window.hpp" />
