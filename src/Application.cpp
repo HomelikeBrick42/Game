@@ -28,6 +28,10 @@ Application::Application() {
 }
 
 Application::~Application() {
+	if (this->Vertices) {
+		delete this->Vertices;
+	}
+
 	WindowDestroy(this->MainWindow);
 }
 
@@ -35,7 +39,7 @@ void Application::Run() {
 	while (!this->MainWindow->ShouldClose) {
 		WindowUpdate(this->MainWindow);
 
-		glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		this->Draw();
@@ -48,16 +52,13 @@ void Application::Init() {
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-	glGenBuffers(1, &VertexBufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, VertexBufferID);
-
 	glm::vec3 vertices[3] = {
 		{  0.0f,  0.5f, 0.0f },
 		{  0.5f, -0.5f, 0.0f },
 		{ -0.5f, -0.5f, 0.0f }
 	};
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	this->Vertices = new VertexBuffer(vertices, sizeof(vertices));
 
 	glGenBuffers(1, &IndexBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferID);
