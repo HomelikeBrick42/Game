@@ -23,6 +23,8 @@ Application::Application() {
 		glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
 		printf("OpenGL Version: %d.%d\n", majorVersion, minorVersion);
 	}
+
+	this->Init();
 }
 
 Application::~Application() {
@@ -42,5 +44,35 @@ void Application::Run() {
 	}
 }
 
+void Application::Init() {
+	glGenVertexArrays(1, &VertexArrayID);
+	glBindVertexArray(VertexArrayID);
+
+	glGenBuffers(1, &VertexBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBufferID);
+
+	glm::vec3 vertices[3] = {
+		{  0.0f,  0.5f, 0.0f },
+		{  0.5f, -0.5f, 0.0f },
+		{ -0.5f, -0.5f, 0.0f }
+	};
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &IndexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferID);
+
+	u32 indices[3] = {
+		0, 1, 2
+	};
+
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), cast(const void*) 0);
+}
+
 void Application::Draw() {
+	glBindVertexArray(VertexArrayID);
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 }
