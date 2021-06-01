@@ -4,7 +4,7 @@
 
 class VertexBuffer {
 public:
-	VertexBuffer(const void* data, u64 size);
+	VertexBuffer(const void* data, u64 size); // TODO: Layout
 	VertexBuffer(const VertexBuffer&) = delete;
 	~VertexBuffer();
 

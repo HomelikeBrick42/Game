@@ -32,6 +32,10 @@ Application::~Application() {
 		delete this->Vertices;
 	}
 
+	if (this->Indices) {
+		delete this->Indices;
+	}
+
 	WindowDestroy(this->MainWindow);
 }
 
@@ -49,25 +53,20 @@ void Application::Run() {
 }
 
 void Application::Init() {
-	glGenVertexArrays(1, &VertexArrayID);
+	glGenVertexArrays(1, &VertexArrayID); // TODO: Move to vertex buffer
 	glBindVertexArray(VertexArrayID);
 
 	glm::vec3 vertices[3] = {
 		{  0.0f,  0.5f, 0.0f },
 		{  0.5f, -0.5f, 0.0f },
-		{ -0.5f, -0.5f, 0.0f }
+		{ -0.5f, -0.5f, 0.0f },
 	};
-
 	this->Vertices = new VertexBuffer(vertices, sizeof(vertices));
 
-	glGenBuffers(1, &IndexBufferID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferID);
-
 	u32 indices[3] = {
-		0, 1, 2
+		0, 1, 2,
 	};
-
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	this->Indices = new IndexBuffer(indices, 3);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), cast(const void*) 0);
@@ -75,5 +74,7 @@ void Application::Init() {
 
 void Application::Draw() {
 	glBindVertexArray(VertexArrayID);
+	this->Vertices->Bind();
+	this->Indices->Bind();
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 }

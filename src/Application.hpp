@@ -2,7 +2,9 @@
 
 #include "./Typedefs.hpp"
 #include "./Window.hpp"
+
 #include "./VertexBuffer.hpp"
+#include "./IndexBuffer.hpp"
 
 class Application {
 public:
@@ -18,5 +20,5 @@ private:
 	Window MainWindow = nullptr;
 	u32 VertexArrayID = 0;
 	VertexBuffer* Vertices = nullptr;
-	u32 IndexBufferID = 0;
+	IndexBuffer* Indices = nullptr;
 };
