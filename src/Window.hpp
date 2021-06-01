@@ -13,3 +13,6 @@ void WindowDestroy(Window window);
 
 void WindowShow(Window window, b8 show);
 void WindowUpdate(Window window);
+
+b8 WindowMakeGLContextCurrent(Window window);
+void WindowSwapBuffers(Window window);

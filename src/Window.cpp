@@ -1,5 +1,7 @@
 #include "./Window.hpp"
 
+#include <glad/glad.h>
+
 #if defined(_WIN32) || defined(_WIN64)
 
 #include <Windows.h>
@@ -141,6 +143,13 @@ Window WindowCreate(u32 width, u32 height, const char* title) {
 void WindowDestroy(Window window) {
 	WindowData data = cast(WindowData) (cast(u8*) window + sizeof(Window_t));
 
+	if (data->GLContext) {
+		if (data->GLContext == wglGetCurrentContext()) {
+			wglMakeCurrent(data->DeviceContext, nullptr);
+		}
+		wglDeleteContext(data->GLContext);
+	}
+
 	if (data->DeviceContext) {
 		ReleaseDC(data->WindowHandle, data->DeviceContext);
 	}
@@ -165,6 +174,52 @@ void WindowUpdate(Window window) {
 		TranslateMessage(&message);
 		DispatchMessageA(&message);
 	}
+}
+
+b8 WindowMakeGLContextCurrent(Window window) {
+	WindowData data = cast(WindowData) (cast(u8*) window + sizeof(Window_t));
+
+	if (!data->GLContext) {
+		PIXELFORMATDESCRIPTOR pixelFormatDescriptor = {
+			.nSize = sizeof(PIXELFORMATDESCRIPTOR),
+			.nVersion = 1,
+			.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+			.iPixelType = PFD_TYPE_RGBA,
+			.cColorBits = 32,
+			.cDepthBits = 24,
+			.cStencilBits = 8,
+			.iLayerType = PFD_MAIN_PLANE,
+		};
+
+		int pixelFormat = ChoosePixelFormat(data->DeviceContext, &pixelFormatDescriptor);
+		if (pixelFormat == 0) {
+			return false;
+		}
+
+		if (!SetPixelFormat(data->DeviceContext, pixelFormat, &pixelFormatDescriptor)) {
+			return false;
+		}
+
+		data->GLContext = wglCreateContext(data->DeviceContext);
+		if (!data->GLContext) {
+			return false;
+		}
+	}
+
+	if (!wglMakeCurrent(data->DeviceContext, data->GLContext)) {
+		return false;
+	}
+
+	if (!gladLoadGL()) {
+		return false;
+	}
+
+	return true;
+}
+
+void WindowSwapBuffers(Window window) {
+	WindowData data = cast(WindowData) (cast(u8*) window + sizeof(Window_t));
+	ASSERT(SwapBuffers(data->DeviceContext));
 }
 
 #else
