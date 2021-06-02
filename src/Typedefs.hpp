@@ -45,7 +45,7 @@ SIZE_ASSERT(b32, 4);
 #if defined(NDEBUG) || !defined(_DEBUG)
 	#define NO_ARRAY_BOUNDS_CHECK
 	#define DEBUG_BREAK() do {} while (0)
-	#define ASSERT(x) do {} while (0)
+	#define ASSERT(x) do { (void)x; } while (0)
 #else
 	#define DEBUG_BREAK() __asm__ volatile("int $0x03")
 	#define ASSERT(x) \
