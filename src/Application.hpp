@@ -19,7 +19,6 @@ private:
 	void Draw();
 private:
 	Window MainWindow = nullptr;
-	u32 VertexArrayID = 0;
 	VertexBuffer* Vertices = nullptr;
 	IndexBuffer* Indices = nullptr;
 	Shader* FlatColorShader = nullptr;

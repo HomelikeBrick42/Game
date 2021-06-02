@@ -1,8 +1,11 @@
 #include "./Application.hpp"
 #include "./Window.hpp"
+#include "./Vertex.hpp"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+
+#include <cstdio>
 
 Application::Application() {
 	this->MainWindow = WindowCreate(1280, 720, "Game Window");
@@ -31,7 +34,6 @@ Application::Application() {
 
 Application::~Application() {
 	delete this->FlatColorShader;
-	glDeleteVertexArrays(1, &VertexArrayID);
 	delete this->Vertices;
 	delete this->Indices;
 
@@ -52,30 +54,17 @@ void Application::Run() {
 }
 
 void Application::Init() {
-	glGenVertexArrays(1, &VertexArrayID); // TODO: Move to vertex buffer
-	glBindVertexArray(VertexArrayID);
-
-	struct Vertex {
-		glm::vec3 Position;
-		glm::vec4 Color;
-	};
-
 	Vertex vertices[3] = {
 		{ {  0.0f,  0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
 		{ {  0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } },
 		{ { -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
 	};
-	this->Vertices = new VertexBuffer(vertices, sizeof(vertices));
+	this->Vertices = new VertexBuffer(vertices, sizeof(vertices), VertexLayout, VertexLayoutCount);
 
 	u32 indices[3] = {
 		0, 1, 2,
 	};
-	this->Indices = new IndexBuffer(indices, 3);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(f32), cast(const void*) (0 * sizeof(f32)));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(f32), cast(const void*) (3 * sizeof(f32)));
+	this->Indices = new IndexBuffer(indices, ArrayLength(indices));
 
 	String vertexSource = StringFromLiteral(R"(
 #version 450 core
@@ -107,7 +96,6 @@ void main() {
 }
 
 void Application::Draw() {
-	glBindVertexArray(VertexArrayID);
 	this->Vertices->Bind();
 	this->Indices->Bind();
 	this->FlatColorShader->Bind();

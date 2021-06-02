@@ -38,13 +38,21 @@ SIZE_ASSERT(b32, 4);
 #undef SIZE_ASSERT
 
 #define cast(type) (type)
+#define ArrayLength(array) (sizeof(array) / sizeof(array[0]))
+
 #define PACKED __attribute__((packed))
 
-#define DEBUG_BREAK() __asm__ volatile("int $0x03")
-#define ASSERT(x) \
-	do { \
-		if (x) { \
-		} else { \
-			DEBUG_BREAK(); \
-		} \
-	} while (0)
+#if defined(NDEBUG) || !defined(_DEBUG)
+	#define NO_ARRAY_BOUNDS_CHECK
+	#define DEBUG_BREAK() do {} while (0)
+	#define ASSERT(x) do {} while (0)
+#else
+	#define DEBUG_BREAK() __asm__ volatile("int $0x03")
+	#define ASSERT(x) \
+		do { \
+			if (x) { \
+			} else { \
+				DEBUG_BREAK(); \
+			} \
+		} while (0)
+#endif
